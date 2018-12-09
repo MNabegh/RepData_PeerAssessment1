@@ -9,7 +9,7 @@ output:
 ```{r}
 setwd('~/DataScience/datasciencecoursera/datasciencecoursera/Reproducible_research/Project_1/RepData_PeerAssessment1')
 library(knitr)
-library(ggplot2)
+library(dplyr)
 ```
 
 ## Set Global Knitr options
@@ -54,7 +54,7 @@ activity_data$date <- as.Date(activity_data$date)
 class(activity_data$date)
 ```
 
-## What is mean total number of steps taken per day?
+## 1. What is mean total number of steps taken per day?
 ```{r}
 total_steps_per_day <- tapply(activity_data$steps, activity_data$date, sum, na.rm = T)
 hist(total_steps_per_day, col = "Blue", xlab = "Total steps per day", main = "Total steps per day distribution", breaks = seq(0, 25000, by = 1000))
@@ -69,10 +69,20 @@ Median value of total steps per day
 median(total_steps_per_day)
 ```
 
-
 ## What is the average daily activity pattern?
+```{r}
+average_steps_per_interval <-  activity_data %>% group_by(interval) %>% summarize(average = mean(steps, na.rm = T))
+plot(average_steps_per_interval$interval, average_steps_per_interval$average, type = "l", col = "Blue", xlab = "Interval", ylab = "Average", main = "Average steps per interval")
+```
 
-
+Maxmium average steps taken per interval
+```{r}
+max(average_steps_per_interval$average)
+```
+Interval in which maxmium steps where taken
+```{r}
+average_steps_per_interval[which.max(average_steps_per_interval$average), 1][[1]]
+```
 
 ## Imputing missing values
 
