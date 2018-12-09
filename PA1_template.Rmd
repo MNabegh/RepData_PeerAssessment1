@@ -9,6 +9,7 @@ output:
 ```{r}
 setwd('~/DataScience/datasciencecoursera/datasciencecoursera/Reproducible_research/Project_1/RepData_PeerAssessment1')
 library(knitr)
+library(ggplot2)
 ```
 
 ## Set Global Knitr options
@@ -54,7 +55,19 @@ class(activity_data$date)
 ```
 
 ## What is mean total number of steps taken per day?
+```{r}
+total_steps_per_day <- tapply(activity_data$steps, activity_data$date, sum, na.rm = T)
+hist(total_steps_per_day, col = "Blue", xlab = "Total steps per day", main = "Total steps per day distribution", breaks = seq(0, 25000, by = 1000))
+```
 
+Mean value of total steps per day
+```{r}
+mean(total_steps_per_day)
+```
+Median value of total steps per day
+```{r}
+median(total_steps_per_day)
+```
 
 
 ## What is the average daily activity pattern?
