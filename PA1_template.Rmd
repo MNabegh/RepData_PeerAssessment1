@@ -5,10 +5,53 @@ output:
     keep_md: true
 ---
 
+## Set the working directory and load dependencies
+```{r}
+setwd('~/DataScience/datasciencecoursera/datasciencecoursera/Reproducible_research/Project_1/RepData_PeerAssessment1')
+library(knitr)
+```
 
-## Loading and preprocessing the data
+## Set Global Knitr options
+```{r}
+opts_chunk$set(warning = F)
+```
 
+## Download the data
+```{r}
+fileUrl = "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
+destFile = "Factivity.zip"
 
+if (!file.exists(destFile))
+    download.file(fileUrl, destfile = destFile, mode = "auto")
+
+folderName = "activity.csv"
+
+if(!file.exists(folderName))
+    unzip(destFile)
+
+rm(destFile, folderName, fileUrl)
+```
+
+## Loading and exploring the data structure
+```{r}
+activity_data <- read.csv("activity.csv", na.strings = "NA")
+dim(activity_data)
+head(activity_data)
+str(activity_data)
+range(activity_data$steps, na.rm = T)
+levels(activity_data$date)
+range(activity_data$interval)
+```
+
+The results of exploring the data structure tells us that the data consists of 17568 rows and 3 columns. The first column represents the number of steps taken in a given interval in a given day and the values has a range of [0, 806] with some missing values represented as NA. The second column represents the date of the day the reading has been taken and it is represented as character factor with 61 levels, meaning we have readings for 61 days starting on 2012-10-01 and ending on 2012-11-30. The third column is an int vector representing the 5 minute interval on which the reading has been taken in a given day, the numbers start from 0 adding 5 to represent the next interval and then ceiling to the next hundred on the start of a new hour to mark it.
+
+## Preprocessing the data
+For now all we need is to change the date variable in the data frame to Date class instead of factor class.
+```{r}
+class(activity_data$date)
+activity_data$date <- as.Date(activity_data$date)
+class(activity_data$date)
+```
 
 ## What is mean total number of steps taken per day?
 
