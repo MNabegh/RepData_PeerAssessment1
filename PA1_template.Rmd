@@ -67,6 +67,7 @@ mean(total_steps_per_day)
 Median value of total steps per day
 ```{r}
 median(total_steps_per_day)
+rm(total_steps_per_day)
 ```
 
 ## What is the average daily activity pattern?
@@ -82,10 +83,33 @@ max(average_steps_per_interval$average)
 Interval in which maxmium steps where taken
 ```{r}
 average_steps_per_interval[which.max(average_steps_per_interval$average), 1][[1]]
+rm(average_steps_per_interval)
 ```
 
 ## Imputing missing values
+Number of missing values
+```{r}
+sum(is.na(activity_data))
+```
+We chose the median value of the interval over all the days to fill in the missing value because there full days of missing values and the median is not affected by outliers.
+```{r}
+medians_activity_data <- activity_data %>% group_by(interval) %>% summarize(median = median(steps, na.rm = T))
+activity_data_imputed <- activity_data %>% mutate(medians = medians_activity_data$median[which(interval == medians_activity_data$interval)]) %>% mutate(steps = ifelse(is.na(steps), medians, steps))
+rm(medians_activity_data)
+```
+Histogram for imputed data
+```{r}
+total_steps_per_day <- tapply(activity_data_imputed$steps, activity_data_imputed$date, sum, na.rm = T)
+hist(total_steps_per_day, col = "Blue", xlab = "Total steps per day", main = "Total steps per day distribution", breaks = seq(0, 25000, by = 1000))
+```
 
-
-
+Mean value of total steps per day
+```{r}
+mean(total_steps_per_day)
+```
+Median value of total steps per day
+```{r}
+median(total_steps_per_day)
+rm(total_steps_per_day)
+```
 ## Are there differences in activity patterns between weekdays and weekends?
